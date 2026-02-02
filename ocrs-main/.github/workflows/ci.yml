@@ -1,0 +1,45 @@
+name: CI
+on:
+  pull_request:
+jobs:
+  ci:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Setup rust
+      run: rustup target add wasm32-unknown-unknown
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+    - name: Cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/.crates.toml
+          ~/.cargo/.crates2.json
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+    - name: Install wasm-bindgen
+      run: cargo install wasm-bindgen-cli --version 0.2.100
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+    - name: Build
+      run: cargo build
+    - name: WASM build
+      run: make wasm
+      if: ${{ matrix.os == 'ubuntu-latest' }}
+    - name: Test
+      run: make test
+    - name: Lint
+      run: |
+        make checkformatting
+        make lint
+    - name: Docs
+      run: make doc
+    - name: E2E Test
+      run: make test-e2e

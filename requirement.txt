@@ -1,0 +1,23 @@
+# ===== CORE =====
+numpy>=1.23,<2.0
+opencv-python>=4.8
+Pillow>=9.5
+
+# ===== TORCH (CPU) =====
+torch==2.2.2
+torchvision==0.17.2
+torchaudio==2.2.2
+
+# ===== OCR =====
+paddleocr>=2.7.0
+paddlepaddle>=2.6.0
+
+# ===== DATA / UTIL =====
+tqdm
+PyYAML
+scipy
+shapely
+scikit-image
+
+
+imgaug
